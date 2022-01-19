@@ -9,6 +9,7 @@ rw = f1.read().splitlines()
 def dump_string_as_grid(s):
 	for i in range(5):
 		print(s[i*5:i*5+5])
+	print("-----\n")
 
 def match(word, letter, index):
 	return word[index] == letter
