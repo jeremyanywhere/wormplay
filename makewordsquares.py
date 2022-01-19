@@ -3,13 +3,8 @@
 
 import random 
 
-
 f1 = open ('5letterwords.txt')
-rw = f1.read().splitlines()
-# print (f"{rw}")
-count = 0
-seed = random.choice(rw)
-print (f"seed-- {seed}")
+rw = f1.read().splitlines() 
 
 def dump_string_as_grid(s):
 	for i in range(5):
@@ -32,7 +27,7 @@ def get_matching_list(pattern):
 	return result_list
 
 def try_next_word(s, n):
-	if (n>5):
+	if (n>9):
 		dump_string_as_grid(s)
 		return
 	match_list = []
@@ -63,4 +58,10 @@ def try_next_word(s, n):
 		try_next_word(st, n+1)
 
 
-try_next_word(seed+"????????????????????", 1)
+
+# random.shuffle(rw)
+
+for seed in rw:
+	print (f"seeding with - {seed}")
+	try_next_word(seed+"????????????????????", 1)
+print("done.")
