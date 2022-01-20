@@ -1,12 +1,20 @@
-# use at your own risk. Quick test for two of the different types of gest in the General Intelligence Exam.
-#Thoughts, comments, improvements welcome.
+# Generates 
 
 import random 
 import time
 
-f1 = open ('5letterwords.txt')
-rw = f1.read().splitlines() 
+f1 = open ('commonwords.txt')
+rw = f1.read().split() 
+file_write = True
+if file_write:
+	fo = open ("out.txt","w")
 word_tree = {}
+ts = time.time()
+
+def output(str):
+	print(str)
+	if file_write:
+		fo.write(str+"\n")
 
 def populate_tree(word, branch):
 	if len(word) == 0:
@@ -18,7 +26,7 @@ def populate_tree(word, branch):
 		branch[word[0]]= {}
 		populate_tree(word[1:len(word)],branch[word[0]])
 
-def get_matches(tree, pattern, match_list, constructed_word):
+def get_matches(tree, pattern, match_list,constructed_word):
 	if len(pattern) == 0:
 		match_list.append(constructed_word)
 		constructed_word=""
@@ -31,12 +39,12 @@ def get_matches(tree, pattern, match_list, constructed_word):
 				get_matches(tree[letter],pattern[1:len(pattern)],match_list, constructed_word+letter)
 
 def dump_string_as_grid(s):
+	tm = time.time()-ts
 	for i in range(5):
-		print(s[i*5:i*5+5])
-	print("-----\n")
-
-def match(word, letter, index):
-	return word[index] == letter
+		output(s[i*5:i*5+5])
+	output("-----\n")
+	output(f"----timestamp {tm}-----\n")
+	
 def get_matching_list(pattern):
 	match_list = []
 	get_matches(word_tree, pattern, match_list, "")
@@ -55,9 +63,10 @@ def get_matching_list_non_recursive(pattern):
 			result_list.append(w)
 	return result_list
 
-def try_next_word(grid, n):
+def try_next_word(grid, n, used_set):
 	if (n>9):
 		dump_string_as_grid(grid)
+		output(f"{used_set}")
 		return
 	match_list = []
 	if (n % 2) == 0: # even, 
@@ -74,37 +83,26 @@ def try_next_word(grid, n):
 		return
 
 	for w in match_list:
-		lw = list(grid)
-		if (n % 2) == 0: #even
-			for x in range(5):
-				lw[int(n/2)*5+x] = w[x]
-		if (n % 2) != 0: # odd, vertical
-			for x in range(5):
-				lw[int((n-1)/2)+x*5] = w[x]
-		st = ""
-		st = st.join(lw)
-		#print(st)
-		try_next_word(st, n+1)
+		if w not in used_set:
+			lw = list(grid)
+			if (n % 2) == 0: #even
+				for x in range(5):
+					lw[int(n/2)*5+x] = w[x]
+			if (n % 2) != 0: # odd, vertical
+				for x in range(5):
+					lw[int((n-1)/2)+x*5] = w[x]
+			st = ""
+			st = st.join(lw)
+			used_set.add(w)
+			try_next_word(st, n+1, used_set)
+			used_set.remove(w)
 
-
-
-# random.shuffle(rw)
 for w in rw:
 	populate_tree(w, word_tree)
 
-ts = time.time()
-print(f"added word tree, length of top node:{len(word_tree)}")
-match_list = []
-p = "??p??"
-ts = time.time()
-match_list = get_matching_list(p)
-print(f"matching {p}, with tree lookup, time taken: {time.time()-ts}ms, match list: {len(match_list)}")
-
-ts = time.time()
-match_list = get_matching_list_non_recursive(p)
-print(f"matching {p}, with linear list look up, time taken: {time.time()-ts}ms,match list: {len(match_list)}")
-
 for seed in rw:
-	print (f"seeding with - {seed}")
-	try_next_word(seed+"????????????????????", 1)
-print("done.")
+	output (f"seeding with - {seed}")
+	try_next_word(seed+"????????????????????", 1, set({}))
+output("done.")
+if file_write:
+	fo.close()
