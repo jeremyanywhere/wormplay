@@ -2,14 +2,15 @@
 
 import random 
 import time
-
-f1 = open ('commonwords.txt')
+word_source = "griddle5.txt"
+f1 = open (word_source)
 rw = f1.read().split() 
+ts = time.time()
+lt = time.localtime(ts)
 file_write = True
 if file_write:
-	fo = open ("out.txt","w")
+	fo = open (f"griddle.out.{lt.tm_year}-{lt.tm_mon}-{lt.tm_mday}-{lt.tm_hour}:{lt.tm_min}:{lt.tm_sec}.txt","w")
 word_tree = {}
-ts = time.time()
 
 def output(str):
 	print(str)
@@ -39,11 +40,11 @@ def get_matches(tree, pattern, match_list,constructed_word):
 				get_matches(tree[letter],pattern[1:len(pattern)],match_list, constructed_word+letter)
 
 def dump_string_as_grid(s):
+	output("\n")
 	tm = time.time()-ts
 	for i in range(5):
 		output(s[i*5:i*5+5])
-	output("-----\n")
-	output(f"----timestamp {tm}-----\n")
+	output(f"\n----timestamp {tm}-----\n")
 	
 def get_matching_list(pattern):
 	match_list = []
@@ -65,8 +66,8 @@ def get_matching_list_non_recursive(pattern):
 
 def try_next_word(grid, n, used_set):
 	if (n>9):
+		output(f"{used_set}\n")
 		dump_string_as_grid(grid)
-		output(f"{used_set}")
 		return
 	match_list = []
 	if (n % 2) == 0: # even, 
@@ -99,10 +100,13 @@ def try_next_word(grid, n, used_set):
 
 for w in rw:
 	populate_tree(w, word_tree)
-
+rw = {'scalp', 'shark', 'lodge', 'rings', 'press', 'cumin'}
+output (f"Using wordlist - {word_source}")
 for seed in rw:
 	output (f"seeding with - {seed}")
+	output(f"\n----timestamp {time.time()-ts}-----\n")
 	try_next_word(seed+"????????????????????", 1, set({seed}))
-output("done.")
+	
+output(f"done: -> {time.time()-ts}")
 if file_write:
 	fo.close()
