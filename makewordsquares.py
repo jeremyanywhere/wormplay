@@ -100,7 +100,7 @@ def try_next_word(grid, n, used_set):
 
 for w in rw:
 	populate_tree(w, word_tree)
-rw = {'scalp', 'shark', 'lodge', 'rings', 'press', 'cumin'}
+#rw = {'scalp', 'shark', 'lodge', 'rings', 'press', 'cumin'}
 output (f"Using wordlist - {word_source}")
 for seed in rw:
 	output (f"seeding with - {seed}")
